@@ -37,6 +37,13 @@ daysBeforeMonth=(month,leapYear=false)->
 		monthIndex++
 	return daysPassed
 
+verticalHtmlString=(str)->
+	html=''
+	for ch,i in str
+		html+=ch
+		if i<str.length-1
+			html+='<br/>'
+	return html
 
 background=new BackgroundLayer
 	width: 750
@@ -63,14 +70,15 @@ workoutLog.addChild(workoutLabel)
 
 upperFade = new Layer
 	width: 767
-	height: 281
+	height: 372
 
 upperFade.style.background = "-webkit-linear-gradient(90deg, rgba(1,71,128,0.00) 0%, #014880 100%)"
 
 lowerFade = new Layer
 	width: 767
-	height: 281
-	y: 892
+	height: 372
+	y: 800
+	x: -3
 
 lowerFade.style.background = "-webkit-linear-gradient(top, rgba(1,71,128,0.00) 0%, #014880 100%)"
 
@@ -79,21 +87,39 @@ calendar=new ScrollComponent
 	height: 1173
 	scrollHorizontal:false
 	scrollVertical:true
-	
-calendar.contentInset=
-	left: 100
 
 calendar.placeBefore(background)
 calendar.content.backgroundColor="#004079"
 
 dayCellSize=60
-gutter=20
+weekXOffset=100
 xGap=10
 yGap=10
 dayOfWeek=0
 weekNo=0
 dayNoFontSize="18pt"
+monthXOffset=15
+monthYOffset=30
+monthGap=4*(yGap+dayCellSize)
+lastMonth=-1
 for dayNumber in [0...365]
+	
+	monthNo=monthOfYear(dayNumber)
+	if monthNo!=lastMonth
+		lastMonth=monthNo
+		month=new Layer
+			parent: calendar.content
+			width: 58
+			height: 160
+			x: monthXOffset
+			y: monthYOffset+(weekNo+1)*(dayCellSize+yGap) # label is at the center
+			borderColor: "rgba(254,253,255,0.5)"
+			backgroundColor: "rgba(75,222,56,0)"
+			style:"text-align":"center","font-size":"40pt"
+			html:verticalHtmlString(monthList[monthNo])
+		month.style['font-size']='20pt'
+		
+
 	dayOfMonth=dayNoInMonth(dayNumber)+1
 	day = new Layer
 		parent: calendar.content
@@ -102,8 +128,8 @@ for dayNumber in [0...365]
 		height: dayCellSize
 		html:dayOfMonth
 		style:"text-align":"center"
-		x:dayOfWeek*(dayCellSize+xGap)
-		y:weekNo*(dayCellSize+gutter)
+		x:weekXOffset+dayOfWeek*(dayCellSize+xGap)
+		y:weekNo*(dayCellSize+yGap)
 		borderWidth: 3
 		borderColor: "rgba(254,253,255,0.5)"
 		backgroundColor: "rgba(123,123,123,0)"
@@ -114,9 +140,3 @@ for dayNumber in [0...365]
 	if dayOfWeek++ == 7
 		dayOfWeek=0
 		weekNo++
-		
-
-
-
-
-
