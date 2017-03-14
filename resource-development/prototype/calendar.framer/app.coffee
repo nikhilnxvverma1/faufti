@@ -1,3 +1,43 @@
+
+#-------------------------------- Helpers --------------------------------
+
+monthList=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"]
+
+# totalMonthDays=[31,28,30,31,30,31,30,31,30,31,30,31]
+
+totalDaysInMonth=(monthIndex,leapYear=false)->
+	totalDays=31
+	if monthIndex%2!=0 # even months are odd coz index starts from 0
+		if monthIndex==1
+			if leapYear
+				totalDays=29
+			else
+				totalDays=28
+		else
+			totalDays=30
+	return totalDays
+	
+dayNoInMonth = (dayOfYear,leapYear=false) ->
+	month=monthOfYear(dayOfYear,leapYear)
+	return dayOfYear-daysBeforeMonth(month,leapYear)
+	
+monthOfYear=(dayOfYear,leapYear=false)->
+	daysPassed=0
+	monthIndex=0
+	while(monthIndex<12 && daysPassed<=dayOfYear)
+		daysPassed+=totalDaysInMonth(monthIndex,leapYear)
+		monthIndex++
+	return monthIndex-1
+	
+daysBeforeMonth=(month,leapYear=false)->
+	daysPassed=0
+	monthIndex=0
+	while(monthIndex<month)
+		daysPassed+=totalDaysInMonth(monthIndex,leapYear)
+		monthIndex++
+	return daysPassed
+
+
 background=new BackgroundLayer
 	width: 750
 	height: 1334
@@ -41,23 +81,42 @@ calendar=new ScrollComponent
 	scrollVertical:true
 	
 calendar.contentInset=
-	left: 300
+	left: 100
 
 calendar.placeBefore(background)
 calendar.content.backgroundColor="#004079"
 
-dayCellSize=100
+dayCellSize=60
 gutter=20
-for dayNumber in [1...31]
+xGap=10
+yGap=10
+dayOfWeek=0
+weekNo=0
+dayNoFontSize="18pt"
+for dayNumber in [0...365]
+	dayOfMonth=dayNoInMonth(dayNumber)+1
 	day = new Layer
 		parent: calendar.content
 		borderRadius: 100
 		width: dayCellSize
 		height: dayCellSize
-		html:dayNumber
+		html:dayOfMonth
 		style:"text-align":"center"
-		y:dayNumber*(dayCellSize+gutter)
+		x:dayOfWeek*(dayCellSize+xGap)
+		y:weekNo*(dayCellSize+gutter)
+		borderWidth: 3
+		borderColor: "rgba(254,253,255,0.5)"
+		backgroundColor: "rgba(123,123,123,0)"
 		
-	day.style["padding-top"]=dayCellSize/3 + "px"
-	day.style["font-size"]="30pt"
+	day.style["padding-top"]=dayCellSize/4 + "px"
+	day.style["font-size"]=dayNoFontSize
+
+	if dayOfWeek++ == 7
+		dayOfWeek=0
+		weekNo++
 		
+
+
+
+
+
