@@ -13,7 +13,8 @@
   "selectedHand" : "",
   "foldedCodeRanges" : [
     "{1, 1100}",
-    "{1802, 1328}"
+    "{1822, 1634}",
+    "{3457, 683}"
   ],
   "deviceScale" : "fit"
 }
